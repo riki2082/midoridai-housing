@@ -210,11 +210,23 @@ function vTop(){
   return `<div class="hero">${ph("hero")}<div class="cover"></div><div class="copy"><div class="inner"><h2>みどり台で、<br>あなたの部屋を見つけよう。</h2><p>地域密着40年。賃貸・売買・管理のご相談はお気軽に。</p></div></div></div>
   <div class="inner"><div class="search"><select><option>エリア：みどり台</option></select><select><option>家賃：上限なし</option></select><select><option>間取り：指定なし</option></select><a class="btn fill" href="#list">検索</a></div></div>
   <section><div class="inner">${sh("PICK UP","おすすめ物件","list")}<div class="cards">${cardHTML("203")}
-   <a class="card" href="#list">${ph("bldg2")}<div class="tx"><div class="rent">54,000<small> 円／月</small></div><h3>コーポみどり台 102</h3><p>1LDK・駅徒歩8分・2015年築</p></div></a>
+   ${corpoCard()}
    ${S.stage>=1&&!after(3)?cardHTML("204"):""}</div></div></section>
   <section class="alt"><div class="inner">${sh("NEWS","お知らせ")}${newsList(4)}</div></section>
   <section><div class="inner">${sh("VOICE","お客様の声")}<div class="voice">${voices().map(x=>`<div>${x[0]}<small>${x[1]}</small></div>`).join("")}</div></div></section>
   ${S.ends.length?`<section class="alt"><div class="inner">${sh("ENDINGS","結末 "+S.ends.length+" / 3")}<div class="voice">${[1,2,3].map(i=>`<div><span class="en" style="font-size:11px;color:var(--main2)">${i===3?"TRUE END":"END "+i}</span><br><b>${S.ends.includes(i)?END_T[i]:"？？？"}</b></div>`).join("")}</div></div></section>`:""}`;
+}
+function corpoCard(){return `<a class="card" href="#bukken-c102">${ph("bldg2")}<div class="tx"><div class="rent">54,000<small> 円／月</small></div><h3>コーポみどり台 102</h3><p>1LDK・駅徒歩8分・2015年築</p><span class="tag">ペット相談</span></div></a>`}
+function vCorpo(){
+  return head("ROOM","コーポみどり台 102号室")+`<section style="padding-top:18px"><div class="inner">
+   <div class="gallery"><figure>${ph("bldg2")}<figcaption>外観</figcaption></figure><figure>${ph("room")}<figcaption>リビング（参考写真）</figcaption></figure></div>
+   <h3 class="sub">物件概要</h3><table class="dtable">
+    <tr><th>家賃</th><td><b style="color:var(--accent);font-size:18px">54,000円</b>　管理費 3,000円</td></tr><tr><th>状況</th><td>空室（2026年12月上旬入居可）</td></tr>
+    <tr><th>間取り</th><td>1LDK（LDK 10畳・洋室 6畳）</td></tr><tr><th>所在地</th><td>○○県みどり台市本町2-8</td></tr>
+    <tr><th>交通</th><td>みどり台駅 徒歩8分</td></tr><tr><th>構造</th><td>鉄骨造3階建て　2015年築</td></tr>
+    <tr><th>設備</th><td>エアコン・独立洗面台・宅配ボックス・オートロック</td></tr><tr><th>備考</th><td>ペット相談可（小型犬・猫1匹まで）</td></tr></table>
+   <div style="margin-top:20px"><a class="btn fill" href="#reserve">この部屋の内見を予約する</a></div>
+  </div></section>`;
 }
 function cardHTML(no){
   if(no==="204") return `<a class="card" href="#bukken-204"><div class="ph" style="background:#111"></div><div class="tx"><div class="rent">――<small> 円／月</small></div><h3>メゾン白萩 204</h3><p>1K・駅徒歩12分・築38年</p><span class="tag o">新着</span></div></a>`;
@@ -229,7 +241,7 @@ function newsItems(){
 }
 const newsList=max=>`<ul class="news">${newsItems().slice(0,max||99).map(x=>`<li><time>${x[0]}</time><span>${x[1]}</span></li>`).join("")}</ul>`;
 function vList(){
-  return head("RENT","賃貸物件一覧")+`<section style="padding-top:18px"><div class="inner"><p class="lead">みどり台エリアの賃貸物件です。（${S.stage>=1&&!after(3)?5:4}件）</p><div class="cards">${["201","202","203","205"].map(cardHTML).join("")}${S.stage>=1&&!after(3)?cardHTML("204"):""}</div></div></section>`;
+  return head("RENT","賃貸物件一覧")+`<section style="padding-top:18px"><div class="inner"><p class="lead">みどり台エリアの賃貸物件です。（${S.stage>=1&&!after(3)?6:5}件）</p><div class="cards">${corpoCard()}${["201","202","203","205"].map(cardHTML).join("")}${S.stage>=1&&!after(3)?cardHTML("204"):""}</div></div></section>`;
 }
 
 /* ===== 建物図面（2階） ===== */
@@ -394,7 +406,7 @@ function route(){
   document.getElementById("drawer").innerHTML=PAGES.map(([k,v])=>`<a href="#${k}">${v}</a>`).join("");
   document.getElementById("drawer").classList.remove("open");
   const m=h.match(/^bukken-(\d{3})$/);
-  document.getElementById("main").innerHTML= m? vBukken(m[1]) : (VIEWS[h]||notFound)();
+  document.getElementById("main").innerHTML= h==="bukken-c102"? vCorpo() : m? vBukken(m[1]) : (VIEWS[h]||notFound)();
   if(lastHash!==h)window.scrollTo(0,0);lastHash=h;bind(h);
 }
 window.addEventListener("hashchange",route);

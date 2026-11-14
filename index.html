@@ -202,7 +202,7 @@ const sh=(en,jp,more)=>`<div class="sh"><span class="en">${en}</span><h2>${jp}</
 
 /* ===== トップ ===== */
 function voices(){
-  const v=[["駅から近く、商店街も便利。担当の方が親切でした。","みどり台3丁目　30代"],["学生の一人暮らしでも安心できる物件を紹介してもらえました。","みどり台1丁目　20代"]];
+  const v=[["駅から近く、商店街も便利。担当の方が親切でした。","みどり台3丁目　30代"],["家賃が安いのに、静かで、いい部屋です。","メゾン白萩　高橋様（2017年ご入居）"],["となりの人が、やさしいんです。","メゾン白萩　井上様（2019年ご入居）"],["ずっと、ここにいたいと思えました。","メゾン白萩　森田様（2021年ご入居）"]];
   if(S.stage>=2&&!after(3)) v.push([`203号室に住んでいました。静かで、いい部屋です。となりの人も、やさしいです。`,`メゾン白萩　${esc(nm())}様`]);
   return v;
 }
@@ -271,6 +271,7 @@ function vBukken(no){
     <tr><th>構造</th><td>木造2階建て　築38年</td></tr><tr><th>貸主</th><td>白萩 トメ</td></tr><tr><th>備考</th><td>${r.d||"―"}${no==="203"?"<br>告知事項：なし":""}</td></tr></table>
    <h3 class="sub">建物図面</h3><div class="planwrap">${planSVG()}<div class="rot">図面の全体は、<br>画面を横にしてご覧ください →</div></div>
    <p class="note" style="margin-top:8px">※ 2階は201・202・203・205の4室です（204は欠番）。</p>
+   <p style="margin-top:14px"><a href="#rules" style="color:var(--main2);border-bottom:1px solid">メゾン白萩　入居者のしおり（生活のルール）</a></p>
    ${no==="203"?`<div style="margin-top:20px"><a class="btn fill" href="#reserve">この部屋の内見を予約する</a></div>`:""}
   </div></section>`;
 }
@@ -331,7 +332,7 @@ function insideBody(){
    <p style="margin-top:10px">「……来ちゃったんですね。ここに入ると、契約書に名前を書くまで出られないんです。<br>　前の人たちは、次の人の名前を書いて、出ていきました。<br>　ぼくは、それだけは、できなくて」</p>
    <p style="margin-top:10px">床に、賃貸借契約書が一枚。借主の欄には、あなたの名前が、薄く鉛筆で下書きされている。</p>
    <div class="contract"><b>賃貸借契約書（メゾン白萩 204号室）</b>
-    <table style="margin-top:8px"><tr><th>貸主</th><td>白萩 トメ</td></tr><tr><th>前借主</th><td>佐野 悠人</td></tr><tr><th>借主</th><td><input id="kname" placeholder="${esc(S.name)||"お名前"}" autocomplete="off"></td></tr><tr><th>賃料</th><td>0円</td></tr><tr><th>契約期間</th><td>――</td></tr></table>
+    <table style="margin-top:8px"><tr><th>貸主</th><td>白萩 トメ</td></tr><tr><th>管理会社</th><td>みどり台ハウジング株式会社</td></tr><tr><th>前借主</th><td>佐野 悠人</td></tr><tr><th>借主</th><td><input id="kname" placeholder="${esc(S.name)||"お名前"}" autocomplete="off"></td></tr><tr><th>賃料</th><td>0円</td></tr><tr><th>契約期間</th><td>――</td></tr></table>
     <div class="hanko" id="hanko"><span>押印</span><i id="hbar"></i></div></div>
    <p style="font-size:12.5px;color:#7d8a83">押印すれば、契約は成立する。</p><div class="msg" id="kmsg"></div>`;
 }
@@ -355,6 +356,30 @@ function sign(raw){
 window.addEventListener("online",()=>{if(location.hash==="#inside"){const i=document.getElementById("inside");if(i&&S.stage<9){i.innerHTML=insideBody();bindInside()}}});
 window.addEventListener("offline",()=>{if(location.hash==="#inside"){const i=document.getElementById("inside");if(i&&S.stage<9){i.innerHTML=insideBody();bindInside()}}});
 
+/* ===== 入居者のしおり ===== */
+function vRules(){
+  const R=[
+   "ゴミは、朝8時までに1階の集積所へお出しください。",
+   "夜10時以降は、お静かにお過ごしください。",
+   "2階の廊下は、大家が毎朝掃除をしております。あいさつは不要です。話しかけられても、返事をしないでください。",
+   "メゾン白萩に、204号室はございません。",
+   "となりの部屋から壁を叩く音がしても、叩き返さないでください。",
+   "押入れの奥の板は、外さないでください。",
+   "夜、窓の外に人が立っていても、目を合わせないでください。",
+   "内見のお客様が部屋を訪ねてきても、なかに入れないでください。",
+   "契約書を見つけても、ご自分の名前は書かないでください。",
+   "このしおりのルールが、10より多いときは、多い分を読まないでください。"];
+  if(S.stage>=2) R.push("押入れの写真を、明るくしないでください。");
+  if(S.stage>=3) R.push("壁を四回叩いた方は、もう、203号室の入居者です。");
+  if(S.stage>=4) R.push("ここまで読んでしまった方は、ルール10を、守れなかった方です。");
+  const d=new Date();
+  return head("RULES","メゾン白萩　入居者のしおり")+`<section style="padding-top:18px"><div class="inner" style="max-width:720px">
+   <p class="lead">メゾン白萩にお住まいの皆さまへ。快適な暮らしのために、以下のルールをお守りください。</p>
+   <ol style="padding-left:1.6em;line-height:2.1;font-size:14.5px">${R.map(r=>`<li style="margin-bottom:6px">${r}</li>`).join("")}</ol>
+   <p class="note" style="margin-top:16px">※ ルールは、必要に応じて追加されます。　最終更新：${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}時${pad(d.getMinutes())}分</p>
+   <p class="note">管理会社：みどり台ハウジング株式会社　／　貸主：白萩 トメ</p></div></section>`;
+}
+
 /* ===== その他のページ ===== */
 function vReserve(){
   return head("RESERVE","内見予約")+`<section style="padding-top:18px"><div class="inner" style="max-width:640px">
@@ -375,7 +400,7 @@ function vBlog(){
   return head("STAFF BLOG","スタッフブログ")+`<section style="padding-top:18px"><div class="inner" style="max-width:760px">${ps.map(p=>`<div class="post"><time>${p[0]}</time><h3>${p[1]}</h3><p>${p[2]}</p><div class="by">担当：佐野</div></div>`).join("")}</div></section>`;
 }
 function vCompany(){
-  return head("COMPANY","会社概要")+`<section style="padding-top:18px"><div class="inner"><table class="dtable"><tr><th>会社名</th><td>みどり台ハウジング株式会社</td></tr><tr><th>創業</th><td>1986年</td></tr><tr><th>事業内容</th><td>賃貸仲介・売買仲介・賃貸管理</td></tr><tr><th>管理物件</th><td>みどり台市内 約120棟（メゾン白萩ほか）</td></tr></table>
+  return head("COMPANY","会社概要")+`<section style="padding-top:18px"><div class="inner"><table class="dtable"><tr><th>会社名</th><td>みどり台ハウジング株式会社</td></tr><tr><th>創業</th><td>1986年</td></tr><tr><th>事業内容</th><td>賃貸仲介・売買仲介・賃貸管理</td></tr><tr><th>管理物件</th><td>みどり台市内 約120棟（メゾン白萩ほか）</td></tr><tr><th>代表あいさつ</th><td>創業以来、メゾン白萩の管理を任されております。お客様に「ずっと住み続けたい」と思っていただける部屋を、これからもご紹介してまいります。</td></tr></table>
   <h3 class="sub">スタッフ</h3><div class="staff"><div><b>緑川 誠</b>代表取締役</div><div><b>岡本 由紀</b>賃貸営業</div><div><b>佐野 悠人</b>賃貸営業・ブログ担当　${after(3)?"":"<span style='color:var(--muted)'>（休職中）</span>"}</div></div></div></section>`;
 }
 function vFaq(){
@@ -396,12 +421,12 @@ function vCredits(){
 function notFound(){return head("404","ページが見つかりません")+`<section style="padding-top:18px"><div class="inner"><p>お探しのページは見つかりませんでした。</p><a class="btn" href="#top" style="margin-top:14px">トップへ</a></div></section>`}
 
 /* ===== ルーティング ===== */
-const VIEWS={top:vTop,list:vList,reserve:vReserve,blog:vBlog,company:vCompany,faq:vFaq,credits:vCredits,inside:vInside};
+const VIEWS={rules:vRules,top:vTop,list:vList,reserve:vReserve,blog:vBlog,company:vCompany,faq:vFaq,credits:vCredits,inside:vInside};
 let lastHash="";
 function route(){
   const h=(location.hash||"#top").slice(1);
   document.body.classList.toggle("night",isNight());
-  document.getElementById("ticker").textContent= after(3)?"メゾン白萩の建物図面を訂正しました": (after(1)||after(2))?"メゾン白萩 203号室は、ご成約となりました":isNight()?"ただいまの時間は、お電話での受付を終了しております":"メゾン白萩 203号室、家賃大幅値下げ！　即入居可";
+  document.getElementById("ticker").textContent= S.stage>=3&&S.stage<9?`ログイン中：メゾン白萩 203号室　${nm()} 様`: after(3)?"メゾン白萩の建物図面を訂正しました": (after(1)||after(2))?"メゾン白萩 203号室は、ご成約となりました":isNight()?"ただいまの時間は、お電話での受付を終了しております":"メゾン白萩 203号室、家賃大幅値下げ！　即入居可";
   document.getElementById("gnav").innerHTML=PAGES.map(([k,v])=>`<a href="#${k}" class="${k===h?"on":""}">${v}</a>`).join("");
   document.getElementById("drawer").innerHTML=PAGES.map(([k,v])=>`<a href="#${k}">${v}</a>`).join("");
   document.getElementById("drawer").classList.remove("open");
